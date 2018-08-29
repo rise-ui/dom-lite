@@ -6,10 +6,14 @@ authors = ["Anton Shramko <antonshramko@yandex.ru>"]
 [dependencies]
 self-tokenize-macro = { git = "https://github.com/victorporof/rust-self-tokenize.git" }
 self-tokenize-trait = { git = "https://github.com/victorporof/rust-self-tokenize.git" }
-yoga =  { version = "0.2", path = "../../yoga-rs", features = ["serde_support"] }
 serde_derive = { version = "=1.0.66", features = ["deserialize_in_place"] }
 serde = { version = "=1.0.66", features = ["rc"] }
 rsx-tree = { path = "../rsx-tree" }
 enum-primitive-derive = "0.1.2"
-jss = { path = "../../jss-rs" }
 num-traits = "0.1.2"
+
+# yoga =  { version = "0.2.0", path = "../../yoga-rs", features = ["serde_support"] }
+yoga = "0.2.0"
+
+jss = { git = "https://github.com/rise-ui/jss-rs" }
+# jss = { path = "../../jss-rs" }

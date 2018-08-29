@@ -20,6 +20,7 @@ extern crate jss;
 pub mod macros;
 
 pub mod convert;
+pub mod events;
 pub mod layout;
 pub mod node;
 pub mod node_data;

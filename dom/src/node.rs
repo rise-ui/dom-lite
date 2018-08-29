@@ -45,10 +45,16 @@ pub enum DOMData<T>
 where
   T: TGenericEvent,
 {
-  Void,
+  Normal(DOMNormalNode<T>),
   ShadowHost(DOMTree<T>),
   Text(DOMTextNode),
-  Normal(DOMNormalNode<T>),
+  Void,
+}
+
+#[derive(Debug, Eq, Ord, Clone, Serialize, Deserialize)]
+pub enum DOMText {
+  Static(Cow<'static, str>),
+  Owned(Rc<String>),
 }
 
 #[derive(Debug, PartialEq)]
@@ -61,15 +67,15 @@ pub struct DOMNormalNode<T>
 where
   T: TGenericEvent,
 {
-  pub(crate) tag: DOMTagName,
   pub(crate) attributes: DOMAttributes<T>,
+  pub(crate) tag: DOMTagName,
 }
 
 #[derive(Debug, PartialEq)]
 pub enum DOMTagName {
+  NamedspacedName(&'static str, &'static str),
   KnownName(KnownElementName),
   Simple(&'static str),
-  NamedspacedName(&'static str, &'static str),
 }
 
 #[derive(Debug, PartialEq)]
@@ -77,10 +83,10 @@ pub struct DOMAttribute<T: TGenericEvent>(pub DOMAttributeName, pub DOMAttribute
 
 #[derive(Debug, PartialEq)]
 pub enum DOMAttributeName {
+  NamedspacedName(&'static str, &'static str),
   KnownName(KnownAttributeName),
   EventType(EventType),
   Simple(&'static str),
-  NamedspacedName(&'static str, &'static str),
 }
 
 #[derive(Debug, PartialEq)]
@@ -189,12 +195,6 @@ where
     let child = &mut self.layout_node;
     parent.remove_child(child);
   }
-}
-
-#[derive(Debug, Eq, Ord, Clone, Serialize, Deserialize)]
-pub enum DOMText {
-  Static(Cow<'static, str>),
-  Owned(Rc<String>),
 }
 
 impl TDOMText for DOMText {
