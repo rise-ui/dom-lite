@@ -11,21 +11,22 @@ specific language governing permissions and limitations under the License.
 
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
+use yoga::Layout;
 
 #[fundamental]
 pub trait TClientRect: Debug + PartialEq + Copy + Serialize + for<'a> Deserialize<'a> {
-  type Position: TClientPosition;
-  type Size: TClientSize;
+    type Position: TClientPosition;
+    type Size: TClientSize;
 
-  fn position(&self) -> Self::Position;
+    fn position(&self) -> Self::Position;
 
-  fn size(&self) -> Self::Size;
+    fn size(&self) -> Self::Size;
 
-  fn offset_from_page(&self, (u32, u32)) -> (u32, u32);
+    fn offset_from_page(&self, (u32, u32)) -> (u32, u32);
 
-  fn client_from_page(&self, (u32, u32)) -> (u32, u32);
+    fn client_from_page(&self, (u32, u32)) -> (u32, u32);
 
-  fn contains_point(&self, (u32, u32)) -> bool;
+    fn contains_point(&self, (u32, u32)) -> bool;
 }
 
 #[fundamental]
@@ -36,18 +37,22 @@ pub trait TClientSize: Debug + PartialEq + Copy + Serialize + for<'a> Deserializ
 
 #[fundamental]
 pub trait TLayoutNode: Debug + PartialEq {
-  // type TextMeasureMetadata;
-  type ReflowDirection;
+    // type TextMeasureMetadata;
+    type ReflowDirection;
 
-  fn is_tainted(&self) -> bool;
+    fn is_tainted(&self) -> bool;
 
-  fn insert_child(&mut self, &mut Self, u32);
+    fn insert_child(&mut self, &mut Self, u32);
 
-  fn append_child(&mut self, &mut Self);
+    fn append_child(&mut self, &mut Self);
 
-  fn remove_child(&mut self, &mut Self);
+    fn remove_child(&mut self, &mut Self);
 
-  fn reflow_subtree(&mut self, u32, u32, Self::ReflowDirection);
+    fn reflow_subtree(&mut self, u32, u32, Self::ReflowDirection);
 
-  fn child_count(&self) -> u32;
+    fn child_count(&self) -> u32;
+
+    fn get_layout(&self) -> Layout;
+
+    fn reset(&mut self);
 }

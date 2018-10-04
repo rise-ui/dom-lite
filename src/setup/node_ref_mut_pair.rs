@@ -16,33 +16,31 @@ use traits::TGenericEvent;
 #[derive(Debug, PartialEq)]
 pub struct DOMArenaRefMutPair<'a, T: 'a>
 where
-  T: TGenericEvent,
+    T: TGenericEvent,
 {
-  raw: RefMutPair<'a, DOMNode<T>>,
+    raw: RefMutPair<'a, DOMNode<T>>,
 }
 
 impl<'a, T> From<RefMutPair<'a, DOMNode<T>>> for DOMArenaRefMutPair<'a, T>
 where
-  T: TGenericEvent,
+    T: TGenericEvent,
 {
-  fn from(raw: RefMutPair<'a, DOMNode<T>>) -> Self {
-    DOMArenaRefMutPair {
-      raw,
+    fn from(raw: RefMutPair<'a, DOMNode<T>>) -> Self {
+        DOMArenaRefMutPair { raw }
     }
-  }
 }
 
 impl<'a, T> DOMArenaRefMutPair<'a, T>
 where
-  T: TGenericEvent,
+    T: TGenericEvent,
 {
-  #[cfg_attr(feature = "cargo-clippy", allow(type_complexity))]
-  pub fn values(&mut self) -> (&mut DOMNode<T>, &mut DOMNode<T>) {
-    self.raw.try_values().expect("Nodes deallocated")
-  }
+    #[cfg_attr(feature = "cargo-clippy", allow(type_complexity))]
+    pub fn values(&mut self) -> (&mut DOMNode<T>, &mut DOMNode<T>) {
+        self.raw.try_values().expect("Nodes deallocated")
+    }
 
-  #[cfg_attr(feature = "cargo-clippy", allow(type_complexity))]
-  pub fn into_values(self) -> (&'a mut DOMNode<T>, &'a mut DOMNode<T>) {
-    self.raw.try_into_values().expect("Nodes deallocated")
-  }
+    #[cfg_attr(feature = "cargo-clippy", allow(type_complexity))]
+    pub fn into_values(self) -> (&'a mut DOMNode<T>, &'a mut DOMNode<T>) {
+        self.raw.try_into_values().expect("Nodes deallocated")
+    }
 }

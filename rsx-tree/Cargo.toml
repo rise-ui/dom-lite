@@ -9,6 +9,7 @@ name = "rsx_tree"
 [features]
 vec-arena = []
 hashmap-arena = []
+default = ["vec-arena"]
 
 [dependencies]
 rsx-arena = { path = "../rsx-arena", default-features = false }

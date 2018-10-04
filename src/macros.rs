@@ -103,30 +103,30 @@ macro_rules! fragment {
 }
 
 macro_rules! impl_text_node_from_stringifiable {
-  ($src: ty) => {
-    impl<E> From<$src> for DOMNode<E>
-    where
-      E: TGenericEvent,
-    {
-      fn from(value: $src) -> Self {
-        DOMNode::new(DOMData::Text(DOMTextNode {
-          content: DOMText::from(value.to_string()),
-        }))
-      }
-    }
-  };
+    ($src: ty) => {
+        impl<E> From<$src> for DOMNode<E>
+        where
+            E: TGenericEvent,
+        {
+            fn from(value: $src) -> Self {
+                DOMNode::new(DOMData::Text(DOMTextNode {
+                    content: DOMText::from(value.to_string()),
+                }))
+            }
+        }
+    };
 }
 
 macro_rules! impl_number_attribute_from_countable {
-  ($src: ty) => {
-    impl<E> From<$src> for DOMAttributeValue<E>
-    where
-      E: TGenericEvent,
-    {
-      #[cfg_attr(feature = "cargo-clippy", allow(cast_lossless))]
-      fn from(value: $src) -> Self {
-        DOMAttributeValue::Number(value as f64)
-      }
-    }
-  };
+    ($src: ty) => {
+        impl<E> From<$src> for DOMAttributeValue<E>
+        where
+            E: TGenericEvent,
+        {
+            #[cfg_attr(feature = "cargo-clippy", allow(cast_lossless))]
+            fn from(value: $src) -> Self {
+                DOMAttributeValue::Number(value as f64)
+            }
+        }
+    };
 }

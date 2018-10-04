@@ -15,52 +15,52 @@ use types::{Closure, EventType, KnownAttributeName};
 
 pub fn is_event_listener<T>(attribute: &DOMAttribute<T>) -> Option<&Closure<T>>
 where
-  T: TGenericEvent,
+    T: TGenericEvent,
 {
-  use self::DOMAttributeName::KnownName;
-  use self::DOMAttributeValue::EventListener;
-  use self::KnownAttributeName::Style;
-  match attribute {
-    &DOMAttribute(KnownName(Style), EventListener(ref l)) => Some(l),
-    _ => None,
-  }
+    use self::DOMAttributeName::KnownName;
+    use self::DOMAttributeValue::EventListener;
+    use self::KnownAttributeName::Style;
+    match attribute {
+        &DOMAttribute(KnownName(Style), EventListener(ref l)) => Some(l),
+        _ => None,
+    }
 }
 
 pub fn is_src<T>(attribute: &DOMAttribute<T>) -> Option<&DOMText>
 where
-  T: TGenericEvent,
+    T: TGenericEvent,
 {
-  use self::DOMAttributeName::KnownName;
-  use self::DOMAttributeValue::Str;
-  use self::KnownAttributeName::Src;
-  match attribute {
-    &DOMAttribute(KnownName(Src), Str(ref s)) => Some(s),
-    _ => None,
-  }
+    use self::DOMAttributeName::KnownName;
+    use self::DOMAttributeValue::Str;
+    use self::KnownAttributeName::Src;
+    match attribute {
+        &DOMAttribute(KnownName(Src), Str(ref s)) => Some(s),
+        _ => None,
+    }
 }
 
 pub fn find_attribute<'a, I, T>(iter: I, name: &DOMAttributeName) -> Option<&'a DOMAttribute<T>>
 where
-  I: IntoIterator<Item = &'a DOMAttribute<T>>,
-  T: TGenericEvent,
+    I: IntoIterator<Item = &'a DOMAttribute<T>>,
+    T: TGenericEvent,
 {
-  iter.into_iter().find(|v| &v.0 == name)
+    iter.into_iter().find(|v| &v.0 == name)
 }
 
 pub fn find_event_listener<'a, I, T: 'a>(iter: I, ty: EventType) -> Option<&'a Closure<T>>
 where
-  I: IntoIterator<Item = &'a DOMAttribute<T>>,
-  T: TGenericEvent,
+    I: IntoIterator<Item = &'a DOMAttribute<T>>,
+    T: TGenericEvent,
 {
-  let name = DOMAttributeName::EventType(ty);
-  is_event_listener(find_attribute(iter, &name)?)
+    let name = DOMAttributeName::EventType(ty);
+    is_event_listener(find_attribute(iter, &name)?)
 }
 
 pub fn find_src<'a, I, T: 'a>(iter: I) -> Option<&'a DOMText>
 where
-  I: IntoIterator<Item = &'a DOMAttribute<T>>,
-  T: TGenericEvent,
+    I: IntoIterator<Item = &'a DOMAttribute<T>>,
+    T: TGenericEvent,
 {
-  let name = DOMAttributeName::KnownName(KnownAttributeName::Src);
-  is_src(find_attribute(iter, &name)?)
+    let name = DOMAttributeName::KnownName(KnownAttributeName::Src);
+    is_src(find_attribute(iter, &name)?)
 }

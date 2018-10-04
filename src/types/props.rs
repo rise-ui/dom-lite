@@ -18,28 +18,27 @@ use traits::TProp;
 #[derive(Debug, Clone)]
 pub struct Prop(Rc<Any>);
 
-impl TProp for Prop {
-}
+impl TProp for Prop {}
 
 impl Prop {
-  pub fn new<T>(value: T) -> Self
-  where
-    T: Any,
-  {
-    Prop(Rc::new(value))
-  }
+    pub fn new<T>(value: T) -> Self
+    where
+        T: Any,
+    {
+        Prop(Rc::new(value))
+    }
 }
 
 impl PartialEq for Prop {
-  fn eq(&self, other: &Self) -> bool {
-    Rc::ptr_eq(&self.0, &other.0)
-  }
+    fn eq(&self, other: &Self) -> bool {
+        Rc::ptr_eq(&self.0, &other.0)
+    }
 }
 
 impl Deref for Prop {
-  type Target = Any;
+    type Target = Any;
 
-  fn deref(&self) -> &Self::Target {
-    &self.0
-  }
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }

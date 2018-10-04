@@ -9,12 +9,12 @@ extern crate self_tokenize_macro;
 #[macro_use]
 extern crate serde_derive;
 
-extern crate self_tokenize_trait;
+extern crate jss;
 extern crate num_traits;
 extern crate rsx_tree;
+extern crate self_tokenize_trait;
 extern crate serde;
 extern crate yoga;
-extern crate jss;
 
 #[macro_use]
 pub mod macros;

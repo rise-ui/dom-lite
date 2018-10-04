@@ -12,8 +12,6 @@ rsx-tree = { path = "../rsx-tree" }
 enum-primitive-derive = "0.1.2"
 num-traits = "0.1.2"
 
-# yoga =  { version = "0.2.0", path = "../../yoga-rs", features = ["serde_support"] }
-yoga = "0.2.0"
-
-jss = { git = "https://github.com/rise-ui/jss-rs" }
-# jss = { path = "../../jss-rs" }
+yoga = { git = "https://github.com/rise-ui/yoga-rs", branch = "enum-case", features = ["serde_support"] }
+# jss = { git = "https://github.com/rise-ui/jss-rs" }
+jss = { path = "../../jss-rs" }
