@@ -187,10 +187,11 @@ where
         // use self::KnownElementName::*;
 
         let layout_node = &mut self.layout_node;
-        let (computed_layout, _errors) = self.styles.collect_layout_style();
-        println!("Computed: {:?}", computed_layout);
+        self.styles.calculate_layout();
+        self.styles.calculate_appearance();
 
-        layout_node.node.apply_styles(&computed_layout);
+        // println!("Computed: {:?}", computed_layout);
+        layout_node.node.apply_styles(&self.styles.computed.layout);
     }
 
     pub fn append_to_layout_node(&mut self, parent: &mut DOMNode<T>) {
