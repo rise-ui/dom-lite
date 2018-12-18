@@ -190,7 +190,7 @@ where
         self.styles.calculate_layout();
         self.styles.calculate_appearance();
 
-        // println!("Computed: {:?}", computed_layout);
+        // println!("Computed: {:?}", &self.styles.computed.layout);
         layout_node.node.apply_styles(&self.styles.computed.layout);
     }
 

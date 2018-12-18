@@ -61,6 +61,8 @@ fn main() {
                         vec![ DOMAttribute::from((DOMAttributeName::from("name"), DOMAttributeValue::from("item"))) ],
                         item_style.clone()
                     )));
+
+                    println!("first_item {:#?}", first_item);
                 }
 
                 {
