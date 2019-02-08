@@ -15,6 +15,7 @@ extern crate rsx_tree;
 extern crate self_tokenize_trait;
 extern crate serde;
 extern crate yoga;
+extern crate hashbrown;
 
 #[macro_use]
 pub mod macros;

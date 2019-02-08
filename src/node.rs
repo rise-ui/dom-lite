@@ -9,18 +9,21 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
-use jss::types::Style;
-use layout::LayoutNode;
-use rsx_tree::types::Id;
-use std::borrow::{Borrow, Cow};
-use std::cmp::Ordering;
-use std::rc::Rc;
-use tree::DOMTree;
-use yoga::Direction;
+use jss::traits::TStyleContext;
+use jss::types::{DimensionType, Style};
 
-use types::{Closure, EventType, KnownAttributeName, KnownElementName, Prop};
-use traits::{TDOMNode, TDOMText, TGenericEvent, TLayoutNode};
+use hashbrown::{HashMap, hash_map::{ Drain }};
+use std::borrow::{Borrow, Cow};
+use rsx_tree::types::Id;
+use layout::LayoutNode;
+use std::cmp::Ordering;
+use yoga::Direction;
+use tree::DOMTree;
+use std::rc::Rc;
+
 use jss::traits::TStyleCollect;
+use traits::{TDOMNode, TDOMText, TGenericEvent, TLayoutNode};
+use types::{Closure, EventType, KnownAttributeName, KnownElementName, Prop};
 use util::is_event_listener;
 
 pub type DOMNodeId<T> = Id<DOMNode<T>>;
@@ -28,7 +31,7 @@ pub type DOMNodeIdPair<T> = (DOMNodeId<T>, DOMNodeId<T>);
 
 pub type DOMNodeSiblingIds<T> = (Option<DOMNodeId<T>>, Option<DOMNodeId<T>>);
 pub type DOMNodeEdgeIds<T> = (Option<DOMNodeId<T>>, Option<DOMNodeId<T>>);
-pub type DOMAttributes<T> = Vec<DOMAttribute<T>>;
+// pub type DOMAttributes<T> = Vec<DOMAttribute<T>>;
 pub type DOMChildren<T> = Vec<DOMNodeId<T>>;
 
 #[derive(Debug, PartialEq)]
@@ -81,6 +84,14 @@ pub enum DOMTagName {
 
 #[derive(Debug, PartialEq)]
 pub struct DOMAttribute<T: TGenericEvent>(pub DOMAttributeName, pub DOMAttributeValue<T>);
+
+#[derive(Debug, PartialEq)]
+pub struct DOMAttributes<T: TGenericEvent> {
+    pub namespaced: HashMap<(&'static str, &'static str), DOMAttributeValue<T>>,
+    pub common: HashMap<KnownAttributeName, DOMAttributeValue<T>>,
+    pub simple: HashMap<&'static str, DOMAttributeValue<T>>,
+    pub listeners: HashMap<EventType, Closure<T>>,
+}
 
 #[derive(Debug, PartialEq)]
 pub enum DOMAttributeName {
@@ -185,6 +196,14 @@ where
 {
     pub fn apply_measurement_metadata_to_layout(&mut self) {
         // use self::KnownElementName::*;
+
+        // preset dimensions for calculate
+        let layout = self.layout_node.get_layout();
+
+        // Set current node dimensions to style context
+        self.styles
+            .context
+            .set_dimension(DimensionType::Parent, Some(layout.clone()));
 
         let layout_node = &mut self.layout_node;
         self.styles.calculate_layout();
@@ -292,14 +311,18 @@ where
         }
     }
 
-    pub fn drop_event_listeners(&mut self) -> Option<&mut Vec<DOMAttribute<T>>> {
-        let attributes = self.attributes_mut()?;
-        attributes.retain(|i| is_event_listener(i).is_none());
-        Some(attributes)
+    pub fn drop_event_listeners<'a>(&mut self) -> Option<Drain<EventType, Closure<T>>> {
+        match self {
+            &mut DOMData::Void | &mut DOMData::ShadowHost(_) | &mut DOMData::Text(_) => None,
+            &mut DOMData::Normal(DOMNormalNode { ref mut attributes, .. }) => {
+                let cleaned = attributes.listeners.drain();
+                Some(cleaned)
+            }
+        }
     }
 
     #[cfg_attr(rustfmt, rustfmt_skip)]
-  pub fn attributes_ref(&self) -> Option<&Vec<DOMAttribute<T>>> {
+    pub fn attributes_ref(&self) -> Option<&DOMAttributes<T>> {
         match self {
             &DOMData::Void | &DOMData::ShadowHost(_) | &DOMData::Text(_) => None,
             &DOMData::Normal(DOMNormalNode { ref attributes, .. }) => Some(attributes)
@@ -307,28 +330,10 @@ where
     }
 
     #[cfg_attr(rustfmt, rustfmt_skip)]
-  pub fn attributes_mut(&mut self) -> Option<&mut Vec<DOMAttribute<T>>> {
+    pub fn attributes_mut(&mut self) -> Option<&mut DOMAttributes<T>> {
         match self {
             &mut DOMData::Void | &mut DOMData::ShadowHost(_) | &mut DOMData::Text(_) => None,
             &mut DOMData::Normal(DOMNormalNode { ref mut attributes, .. }) => Some(attributes)
         }
-    }
-
-    pub fn attributes_slice(&self) -> &[DOMAttribute<T>] {
-        self.attributes_ref().map(|v| &v[..]).unwrap_or(&[])
-    }
-
-    pub fn attributes_slice_mut(&mut self) -> &mut [DOMAttribute<T>] {
-        self.attributes_mut().map(|v| &mut v[..]).unwrap_or(&mut [])
-    }
-
-    #[cfg_attr(feature = "cargo-clippy", allow(needless_lifetimes))]
-    pub fn get_attributes<'a>(&'a self) -> impl Iterator<Item = &'a DOMAttribute<T>> {
-        self.attributes_slice().iter()
-    }
-
-    #[cfg_attr(feature = "cargo-clippy", allow(needless_lifetimes))]
-    pub fn get_event_listeners<'a>(&'a self) -> impl Iterator<Item = &'a Closure<T>> {
-        self.attributes_slice().iter().filter_map(is_event_listener)
     }
 }

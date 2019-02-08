@@ -9,6 +9,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 */
 
+use hashbrown::HashMap;
 use jss::types::Style;
 use std::borrow::Cow;
 use std::rc::Rc;
@@ -81,12 +82,60 @@ impl_text_node_from_stringifiable!(isize);
 impl_text_node_from_stringifiable!(usize);
 impl_text_node_from_stringifiable!(char);
 
+impl <E>Default for DOMAttributes<E>
+where E: TGenericEvent {
+    fn default() -> DOMAttributes<E> {
+        let namespaced: HashMap<(&'static str, &'static str), DOMAttributeValue<E>> = HashMap::default();
+        let common: HashMap<KnownAttributeName, DOMAttributeValue<E>> = HashMap::default();
+        let simple: HashMap<&'static str, DOMAttributeValue<E>> = HashMap::default();
+        let listeners: HashMap<EventType, Closure<E>> = HashMap::default();
+
+        DOMAttributes {
+            namespaced,
+            listeners,
+            common,
+            simple,
+        }
+    }
+}
+
+impl<E> From<Vec<DOMAttribute<E>>> for DOMAttributes<E>
+where E: TGenericEvent,
+{
+    fn from(list: Vec<DOMAttribute<E>>) -> DOMAttributes<E> {
+        let mut attributes = DOMAttributes::default();
+        use self::DOMAttributeName::*;
+        
+        for attr in list {
+            let value = attr.1;
+            let key = attr.0;
+
+            let _:bool = match key {
+                NamedspacedName(group, subgroup) => attributes.namespaced.insert((group, subgroup), value).is_some(),
+                KnownName(name) => attributes.common.insert(name, value).is_some(),
+                Simple(name) => attributes.simple.insert(name, value).is_some(),
+
+                EventType(event_type) => {
+                    if let DOMAttributeValue::EventListener(listener) = value {
+                        attributes.listeners.insert(event_type, listener).is_some();
+                        true
+                    } else {
+                        false
+                    }
+                },
+            };
+        }
+
+        attributes
+    }
+}
+
 impl<E> From<DOMTagName> for DOMNode<E>
 where
     E: TGenericEvent,
 {
     fn from(tag: DOMTagName) -> Self {
-        let attributes = vec![];
+        let attributes = DOMAttributes::default();
         DOMNode::new(DOMData::Normal(DOMNormalNode { tag, attributes }))
     }
 }
@@ -100,9 +149,9 @@ where
     }
 }
 
-impl<E> From<(DOMTagName, Style)> for DOMNode<E> 
+impl<E> From<(DOMTagName, Style)> for DOMNode<E>
 where
-    E: TGenericEvent
+    E: TGenericEvent,
 {
     fn from((tag, style): (DOMTagName, Style)) -> Self {
         let mut node = DOMNode::from((tag, DOMAttributes::default()));
@@ -111,9 +160,9 @@ where
     }
 }
 
-impl<E> From<(DOMTagName, DOMAttributes<E>, Style)> for DOMNode<E> 
+impl<E> From<(DOMTagName, DOMAttributes<E>, Style)> for DOMNode<E>
 where
-    E: TGenericEvent
+    E: TGenericEvent,
 {
     fn from((tag, attributes, style): (DOMTagName, DOMAttributes<E>, Style)) -> Self {
         let mut node = DOMNode::from((tag, attributes));

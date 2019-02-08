@@ -211,4 +211,19 @@ where
             next_child_id = self.get(child_id).next_sibling_id();
         }
     }
+
+    pub fn calculate_styles(&mut self) {
+        // @todo: adding set dimensions variable for style before calculate
+        self.apply_measurement_metadata_to_layout();
+
+        let mut next_child_id = self.first_child_id();
+        while let Some(child_id) = next_child_id {
+            {
+                let mut child_ref = self.get_mut(child_id);
+                child_ref.calculate_styles();
+            }
+
+            next_child_id = self.get(child_id).next_sibling_id();
+        }
+    }
 }

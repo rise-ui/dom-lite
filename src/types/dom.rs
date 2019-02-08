@@ -17,6 +17,7 @@ use types::{
     VIRTUAL_SELECT, VIRTUAL_WHEEL,
 };
 
+/// Raw primitive Id, also you can get DOMNodeId with FromPrimitive::from_u64
 pub type DOMNodeRawId = u64;
 pub type EventTypeId = u8;
 pub type KnownAttributeNameId = u8;

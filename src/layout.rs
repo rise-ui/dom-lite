@@ -1,5 +1,5 @@
-use yoga::{Direction, Node, Layout};
 use traits::TLayoutNode;
+use yoga::{Direction, Layout, Node};
 
 #[derive(Debug, PartialEq)]
 pub struct LayoutNode {

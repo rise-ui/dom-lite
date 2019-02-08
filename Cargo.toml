@@ -9,6 +9,7 @@ self-tokenize-macro = { git = "https://github.com/victorporof/rust-self-tokenize
 self-tokenize-trait = { git = "https://github.com/victorporof/rust-self-tokenize.git" }
 serde_derive = { version = "=1.0.80", features = ["deserialize_in_place"] }
 rsx-tree = { path = "./rsx-tree", features = ["vec-arena" ]}
+hashbrown = { version = "0.1.8", features = ["serde"] }
 serde = { version = "=1.0.80", features = ["rc"] }
 enum-primitive-derive = "0.1.2"
 num-traits = "0.1.2"
