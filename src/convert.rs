@@ -171,6 +171,26 @@ where
     }
 }
 
+impl<E> From<(DOMTagName, Vec<DOMAttribute<E>>, Style)> for DOMNode<E>
+where
+    E: TGenericEvent,
+{
+    fn from((tag, attributes, style): (DOMTagName, Vec<DOMAttribute<E>>, Style)) -> Self {
+        let mut node = DOMNode::from((tag, DOMAttributes::from(attributes)));
+        node.styles = style;
+        node
+    }
+}
+
+impl<E> From<(DOMTagName, Vec<DOMAttribute<E>>)> for DOMNode<E>
+where
+    E: TGenericEvent,
+{
+    fn from((tag, attributes): (DOMTagName, Vec<DOMAttribute<E>>)) -> Self {
+        DOMNode::from((tag, DOMAttributes::from(attributes)))
+    }
+}
+
 impl<E> From<DOMTree<E>> for DOMNode<E>
 where
     E: TGenericEvent,
