@@ -14,5 +14,5 @@ serde = { version = "=1.0.80", features = ["rc"] }
 enum-primitive-derive = "0.1.2"
 num-traits = "0.1.2"
 
-# jss = { git = "https://github.com/rise-ui/jss-rs" }
-jss = { path = "../jss-rs" }
+jss = { git = "https://github.com/rise-ui/jss-rs" }
+# jss = { path = "../jss-rs" }
